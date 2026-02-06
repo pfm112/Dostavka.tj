@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -26,7 +25,6 @@ export default function HomePage() {
 
       {/* TOP CATEGORIES */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Restaurants */}
         <Link
           href="/restaurants"
           className="flex h-[220px] flex-col items-center justify-center rounded-3xl bg-green-600 text-white shadow-sm active:scale-[0.99]"
@@ -35,7 +33,6 @@ export default function HomePage() {
           <div className="text-lg font-extrabold">Рестораны</div>
         </Link>
 
-        {/* Right column */}
         <div className="grid grid-rows-2 gap-4">
           <button className="flex h-full flex-col items-center justify-center rounded-3xl bg-indigo-200 font-extrabold shadow-sm active:scale-[0.99]">
             <div className="mb-2 text-3xl">＋</div>
@@ -81,16 +78,8 @@ export default function HomePage() {
 
       {/* Restaurant cards */}
       <div className="mt-4 space-y-4">
-        <RestaurantCard
-          name="J Burger"
-          cuisine="Европейская кухня"
-          rating="4.3"
-        />
-        <RestaurantCard
-          name="Истиклол Пицца"
-          cuisine="Итальянская кухня"
-          rating="4.3"
-        />
+        <RestaurantCard name="J Burger" cuisine="Европейская кухня" rating="4.3" />
+        <RestaurantCard name="Истиклол Пицца" cuisine="Итальянская кухня" rating="4.3" />
       </div>
     </div>
   );
@@ -106,23 +95,49 @@ function RestaurantCard({
   rating: string;
 }) {
   return (
-    <div className="rounded-3xl bg-gray-100 p-4">
-      <div className="mb-3 flex gap-2">
-        <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white">
-          -25% на всё
-        </span>
-        <span className="rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white">
-          10% кешбек
-        </span>
+    <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
+      {/* IMAGE AREA (фикс высота, одинаковые отступы, элементы absolute) */}
+      <div className="relative h-[140px] rounded-3xl bg-gray-200">
+        {/* heart */}
+        <button
+          className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-lg"
+          aria-label="favorite"
+        >
+          ♡
+        </button>
+
+        {/* badges */}
+        <div className="absolute right-3 top-3 flex flex-col gap-2">
+          <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white">
+            -25% на всё
+          </span>
+          <span className="rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white">
+            10% кешбек
+          </span>
+        </div>
       </div>
 
-      <div className="text-lg font-extrabold">{name}</div>
-      <div className="mt-1 text-sm text-gray-600">
-        {cuisine} · 20–25 мин · от 50 TJS
-      </div>
+      {/* CONTENT (фиксированные paddings) */}
+      <div className="px-4 pb-4 pt-3">
+        <div className="text-lg font-extrabold">{name}</div>
+        <div className="mt-1 text-sm text-gray-600">{cuisine}</div>
 
-      <div className="mt-2 flex items-center gap-1 text-sm font-bold">
-        ⭐ {rating}
+        <div className="mt-3 flex items-center gap-4 text-sm text-gray-700">
+          <div className="flex items-center gap-1">
+            <span>🕒</span>
+            <span>20-25 мин.</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span>⭐</span>
+            <span>{rating}</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span>🚚</span>
+            <span>от 50 TJS</span>
+          </div>
+        </div>
       </div>
     </div>
   );
