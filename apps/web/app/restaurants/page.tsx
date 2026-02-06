@@ -1,116 +1,56 @@
-'use client';
-
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 
-type Restaurant = {
-  id: number;
-  name: string;
-  cuisine?: string | null;
-  rating?: number | null;
-  eta_min?: number | null;
-  eta_max?: number | null;
-  min_order_tjs?: number | null;
-  discount_text?: string | null;
-  cashback_text?: string | null;
-  is_active?: boolean;
+type CuisineCard = {
+  title: string;
+  slug: string;
+  img: string;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "";
+const CUISINES: CuisineCard[] = [
+  { title: "Национальная кухня", slug: "national", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Европейская кухня", slug: "european", img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Турецкая кухня", slug: "turkish", img: "https://images.unsplash.com/photo-1604909053196-9833f2cc0c0d?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Японская кухня", slug: "japanese", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Fast food", slug: "fast-food", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Полезная кухня", slug: "healthy", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=60" },
+  { title: "Домашняя кухня", slug: "home", img: "https://images.unsplash.com/photo-1547573854-74d2a71d0826?auto=format&fit=crop&w=1200&q=60" },
+];
 
-export default function RestaurantsPage() {
-  const [items, setItems] = useState<Restaurant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-
-  useEffect(() => {
-    const run = async () => {
-      try {
-        setLoading(true);
-        setErr(null);
-
-        const res = await fetch(`${API_URL}/restaurants`, { cache: "no-store" });
-        if (!res.ok) throw new Error(`API ${res.status}`);
-        const data = (await res.json()) as Restaurant[];
-        setItems(Array.isArray(data) ? data : []);
-      } catch (e: any) {
-        setErr(e?.message || "fetch_failed");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    run();
-  }, []);
-
-  const active = useMemo(
-    () => items.filter((r) => r.is_active !== false),
-    [items]
-  );
-
+export default function RestaurantsRoot() {
   return (
-    <div className="mx-auto max-w-[430px] min-h-screen bg-white shadow">
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">Рестораны</h1>
+    <div className="mx-auto max-w-[430px] min-h-screen bg-white p-4">
+      <div className="flex items-center gap-3 mb-4">
+        <Link href="/" className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+          ←
+        </Link>
+        <h1 className="text-xl font-extrabold flex-1 text-center pr-10">Все кухни</h1>
+      </div>
 
-        {!API_URL && (
-          <div className="mt-3 rounded-xl border p-3 text-sm">
-            ⚠️ Не задан NEXT_PUBLIC_API_URL. Добавь переменную в Vercel:
-            <div className="mt-2 font-mono text-xs break-all">
-              NEXT_PUBLIC_API_URL = https://dostavka-db.onrender.com
+      <div className="grid grid-cols-2 gap-4">
+        {CUISINES.map((c) => (
+          <Link
+            key={c.slug}
+            href={`/cuisine/${c.slug}`}
+            className="block rounded-2xl overflow-hidden shadow-sm border bg-white"
+          >
+            <div
+              className="h-28 w-full bg-center bg-cover"
+              style={{ backgroundImage: `url(${c.img})` }}
+            />
+            <div className="p-3">
+              <div className="font-semibold text-sm leading-tight">{c.title}</div>
             </div>
-          </div>
-        )}
+          </Link>
+        ))}
+      </div>
 
-        {loading && <p className="mt-4">Загрузка…</p>}
-        {err && (
-          <p className="mt-4 text-red-600">
-            Ошибка: {err}. Проверь API_URL и CORS.
-          </p>
-        )}
-
-        <div className="mt-4 space-y-3">
-          {active.map((r) => (
-            <Link
-              key={r.id}
-              href={`/restaurant/${r.id}`}
-              className="block rounded-2xl border p-4 hover:bg-gray-50"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-lg font-semibold">{r.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {r.cuisine || "Кухня"} ·{" "}
-                    {r.eta_min && r.eta_max ? `${r.eta_min}-${r.eta_max} мин` : "—"}
-                    {r.min_order_tjs ? ` · от ${r.min_order_tjs} TJS` : ""}
-                  </div>
-                </div>
-
-                <div className="text-right text-sm">
-                  {typeof r.rating === "number" && (
-                    <div>⭐ {r.rating.toFixed(1)}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-2 flex gap-2">
-                {r.discount_text && (
-                  <span className="rounded-full bg-green-600 px-3 py-1 text-xs text-white">
-                    {r.discount_text}
-                  </span>
-                )}
-                {r.cashback_text && (
-                  <span className="rounded-full bg-indigo-600 px-3 py-1 text-xs text-white">
-                    {r.cashback_text}
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
+      <div className="mt-6">
+        <Link
+          href="/restaurants/all"
+          className="block w-full text-center rounded-2xl py-3 font-semibold bg-green-600 text-white"
+        >
+          Все рестораны
+        </Link>
       </div>
     </div>
   );
