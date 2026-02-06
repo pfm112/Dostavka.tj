@@ -1,148 +1,129 @@
-import Link from "next/link";
-import { BottomNav } from "../components/BottomNav";
-import { Badge, Card, IconBtn, Pill } from "../components/ui";
-import { apiGet } from "../lib/api";
+'use client';
 
-type Restaurant = {
-  id: number;
-  name: string;
-  cuisine: string;
-  rating: number;
-  eta_min: number;
-  eta_max: number;
-  min_order_tjs: number;
-  free_delivery: boolean;
-  discount_text?: string | null;
-  cashback_text?: string | null;
-};
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default async function Home() {
-  const restaurants = await apiGet<Restaurant[]>("/restaurants");
-
+export default function HomePage() {
   return (
-    <div className="pb-20">
-      {/* Header with address bar */}
-      <div className="flex items-center gap-2 p-3">
-        <div className="h-10 w-10 rounded-full bg-[var(--brand)]/20" />
-        <div className="flex-1 rounded-full bg-gray-100 px-4 py-2 text-center text-sm text-gray-500">
+    <div className="mx-auto min-h-screen max-w-[430px] bg-white px-4 pb-28 pt-4">
+      {/* Address */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex-1 rounded-full bg-gray-100 py-2 text-center text-sm text-gray-500">
           Адрес доставки
         </div>
-        <IconBtn>👤</IconBtn>
-      </div>
-
-      {/* Banner */}
-      <div className="px-3">
-        <div className="h-24 rounded-[22px] bg-pink-200 p-4">
-          <div className="text-lg font-extrabold leading-tight">
-            Скидка 20%<br/>в ресторанах
-          </div>
-          <div className="mt-1 text-sm font-semibold">промокод SALE20</div>
+        <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
+          👤
         </div>
       </div>
 
-      {/* Big category buttons */}
-      <div className="grid grid-cols-2 gap-3 p-3">
+      {/* Promo */}
+      <div className="mb-5 rounded-3xl bg-pink-200 p-4">
+        <div className="text-lg font-extrabold">Скидка 20%</div>
+        <div className="text-sm font-medium">
+          в ресторанах<br />промокод <b>SALE20</b>
+        </div>
+      </div>
+
+      {/* TOP CATEGORIES */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Restaurants */}
         <Link
           href="/restaurants"
-          className="rounded-[26px] bg-[var(--brand)] p-6 text-center text-white active:scale-[0.99]"
+          className="flex h-[220px] flex-col items-center justify-center rounded-3xl bg-green-600 text-white shadow-sm active:scale-[0.99]"
         >
-          <div className="text-3xl">☕</div>
-          <div className="mt-2 text-lg font-bold">Рестораны</div>
+          <div className="mb-3 text-3xl">☕</div>
+          <div className="text-lg font-extrabold">Рестораны</div>
         </Link>
 
-        <div className="grid gap-3">
-          <Link
-            href="/pharmacies"
-            className="rounded-[26px] bg-indigo-200 p-5 text-center active:scale-[0.99]"
-          >
-            <div className="text-2xl">➕</div>
-            <div className="mt-1 font-bold">Аптеки</div>
-          </Link>
+        {/* Right column */}
+        <div className="grid grid-rows-2 gap-4">
+          <button className="flex h-full flex-col items-center justify-center rounded-3xl bg-indigo-200 font-extrabold shadow-sm active:scale-[0.99]">
+            <div className="mb-2 text-3xl">＋</div>
+            Аптеки
+          </button>
 
-          <Link
-            href="/shops"
-            className="rounded-[26px] bg-gray-200 p-5 text-center active:scale-[0.99]"
-          >
-            <div className="text-2xl">🏪</div>
-            <div className="mt-1 font-bold">Магазины</div>
-          </Link>
+          <button className="flex h-full flex-col items-center justify-center rounded-3xl bg-gray-200 font-extrabold shadow-sm active:scale-[0.99]">
+            <div className="mb-2 text-3xl">🏪</div>
+            Магазины
+          </button>
         </div>
       </div>
 
       {/* Search */}
-      <div className="px-3">
-        <form
-          action="/search"
-          method="get"
-          className="flex items-center gap-2 rounded-full bg-gray-100 px-4 py-3"
-        >
-          <span className="text-sm text-gray-500">🔍</span>
-          <input
-            name="q"
-            placeholder="Поиск ресторана..."
-            className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
-            autoComplete="off"
-          />
-        </form>
+      <div className="mt-5 flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-400">
+        🔍 Поиск ресторана...
       </div>
 
-      {/* Cuisine tabs */}
-      <div className="flex gap-3 px-3 py-3">
-        <Pill active>Завтраки</Pill>
-        <Pill>Бургеры</Pill>
-        <Pill>Пиццы</Pill>
-        <Pill>Суши</Pill>
+      {/* Filters */}
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+        {['Завтраки', 'Бургеры', 'Пиццы', 'Суши'].map((t, i) => (
+          <button
+            key={t}
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium ${
+              i === 0 ? 'bg-green-600 text-white' : 'bg-gray-100'
+            }`}
+          >
+            {t}
+          </button>
+        ))}
       </div>
 
       {/* Title */}
-      <div className="flex items-center justify-between px-3">
-        <h1 className="text-3xl font-extrabold">Рестораны</h1>
+      <div className="mt-5 flex items-center justify-between">
+        <h2 className="text-2xl font-extrabold">Рестораны</h2>
         <Link
-          className="rounded-full bg-[var(--brand)] px-6 py-2 text-sm font-bold text-white"
-          href="/cuisines"
+          href="/restaurants"
+          className="rounded-full bg-green-600 px-4 py-2 text-sm font-bold text-white"
         >
           Все
         </Link>
       </div>
 
-      {/* List */}
-      <div className="space-y-4 p-3">
-        {restaurants.map((r) => (
-          <Link key={r.id} href={`/restaurant/${r.id}`}>
-            <Card>
-              <div className="relative">
-                <div className="h-44 rounded-[22px] bg-gray-200" />
-                <div className="absolute left-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-white/70">
-                  ♡
-                </div>
-                {r.discount_text ? (
-                  <div className="absolute right-3 top-3 rounded-full bg-[var(--brand)] px-4 py-2 text-xs font-bold text-white">
-                    {r.discount_text}
-                  </div>
-                ) : null}
-                {r.cashback_text ? (
-                  <div className="absolute right-3 top-14 rounded-full bg-indigo-500 px-4 py-2 text-xs font-bold text-white">
-                    {r.cashback_text}
-                  </div>
-                ) : null}
-              </div>
+      {/* Restaurant cards */}
+      <div className="mt-4 space-y-4">
+        <RestaurantCard
+          name="J Burger"
+          cuisine="Европейская кухня"
+          rating="4.3"
+        />
+        <RestaurantCard
+          name="Истиклол Пицца"
+          cuisine="Итальянская кухня"
+          rating="4.3"
+        />
+      </div>
+    </div>
+  );
+}
 
-              <div className="px-4 pb-4 pt-3">
-                <div className="text-xl font-extrabold">{r.name}</div>
-                <div className="text-sm text-gray-500">{r.cuisine}</div>
-                <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
-                  <span>🕒 {r.eta_min}-{r.eta_max} мин.</span>
-                  <span>⭐ {r.rating.toFixed(1)}</span>
-                  <span>🚚 от {r.min_order_tjs} TJS</span>
-                  {r.free_delivery ? <Badge>Бесплатная доставка</Badge> : null}
-                </div>
-              </div>
-            </Card>
-          </Link>
-        ))}
+function RestaurantCard({
+  name,
+  cuisine,
+  rating,
+}: {
+  name: string;
+  cuisine: string;
+  rating: string;
+}) {
+  return (
+    <div className="rounded-3xl bg-gray-100 p-4">
+      <div className="mb-3 flex gap-2">
+        <span className="rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white">
+          -25% на всё
+        </span>
+        <span className="rounded-full bg-indigo-500 px-3 py-1 text-xs font-bold text-white">
+          10% кешбек
+        </span>
       </div>
 
-      <BottomNav />
+      <div className="text-lg font-extrabold">{name}</div>
+      <div className="mt-1 text-sm text-gray-600">
+        {cuisine} · 20–25 мин · от 50 TJS
+      </div>
+
+      <div className="mt-2 flex items-center gap-1 text-sm font-bold">
+        ⭐ {rating}
+      </div>
     </div>
   );
 }
