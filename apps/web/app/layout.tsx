@@ -1,18 +1,20 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import BottomNav from "@/components/BottomNav";
 
-export const metadata: Metadata = {
-  title: "dostavka.tj",
-  description: "Food delivery MVP",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ru">
-      <body>
-        <div className="mx-auto min-h-screen max-w-[430px] bg-white shadow">
+      <body className="bg-white">
+        <div className="mx-auto max-w-[430px] min-h-screen pb-20">
           {children}
         </div>
+
+        {/* Нижний футер */}
+        <BottomNav />
       </body>
     </html>
   );
