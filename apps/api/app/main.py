@@ -74,15 +74,17 @@ def auth_verify_otp(payload: dict, session: Session = Depends(get_session)):
 
 # ---- Catalog ----
 @app.get("/restaurants")
-def list_restaurants(session: Session = Depends(get_session)):
-    return session.exec(select(Restaurant).where(Restaurant.is_active == True)).all()
+def list_restaurants(
+    cuisine: str | None = None,
+    session: Session = Depends(get_session),
+):
+    query = select(Restaurant).where(Restaurant.is_active == True)
 
-@app.get("/restaurants/{restaurant_id}")
-def get_restaurant(restaurant_id: int, session: Session = Depends(get_session)):
-    r = session.get(Restaurant, restaurant_id)
-    if not r:
-        raise HTTPException(404, "not_found")
-    return r
+    if cuisine:
+        query = query.where(Restaurant.cuisine == cuisine)
+
+    return session.exec(query).all()
+
 
 @app.get("/restaurants/{restaurant_id}/products")
 def list_products(restaurant_id: int, session: Session = Depends(get_session)):
